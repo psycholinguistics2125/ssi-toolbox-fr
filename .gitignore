@@ -1,3 +1,9 @@
+ssi_toolbox/models/*.kv
+ssi_toolbox/models/*.npy
+ssi_toolbox/models/*.bin
+
+corpus/*.pkl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

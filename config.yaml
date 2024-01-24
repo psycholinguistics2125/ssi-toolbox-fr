@@ -1,0 +1,7 @@
+data_paths:
+  interviewer_csv: "/home/robin/Data/Etude_1000/enqueteur/data_enqueteur.csv"
+  respondant_csv: "/home/robin/Data/Etude_1000/enqueteur/data_participants.csv"
+  interviews_list: "/home/robin/Data/Etude_1000/clean_13_november_data_v3.h5"
+  interview_guide_xml: path/to/interview_guide.xml
+
+model_folder: /home/robin/Code_repo/psycholinguistic2125/ssi-toolbox-fr/ssi_toolbox/models

@@ -1,0 +1,5 @@
+pandas
+sentence-transformers
+spacy
+tables
+pyyaml

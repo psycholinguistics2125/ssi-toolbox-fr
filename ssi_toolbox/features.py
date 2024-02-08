@@ -56,6 +56,12 @@ def average_utterance_length_by_speaker(
         ]
     )
 
+def extract_enq_text(interview) : 
+    enq_text = []
+    for utt in interview : 
+        if utt['speaker'] == "enqueteur" : 
+            enq_text.append(utt['text'])
+    return enq_text
 
 def utterance_length_by_speaker(interview, unit="lemma", speaker_id="enqueteur"):
     return [
@@ -175,9 +181,53 @@ def inter_speaker_turn_duration(interview):
     return inter_speaker_durations
 
 
-def dialog_act_classification(utterance):
-    # You can implement a dialog act classifier or use an existing one here
-    pass
+def predict_dialog_act(interview, model, labels_dict):
+    for utt in interview:
+        if utt['speaker'] == "enqueteur":
+            pred = model([utt['text']])[0]
+            utt['dialog_act'] = [[f for f, p in zip(labels_dict, ps) if p] for ps in [pred]]
+    return interview
+
+
+def predict_dialog_themes(interview, model, labels_dict):
+    for utt in interview:
+        if utt['speaker'] == "enqueteur":
+            probas = model.predict_proba([utt['text']])
+            argmax_indices  = np.argmax(probas,axis=1)
+            preds = np.zeros_like(probas)
+            row = np.arange(probas.shape[0])
+            preds[row, argmax_indices] = 1
+            pred = preds[0]
+
+            utt['dialog_theme'] = [[f for f, p in zip(labels_dict, ps) if p] for ps in [pred]]
+            print(utt['dialog_theme'])
+    return interview
+
+
+def get_dialog_act_list(interview):
+    dialog_act_list = []
+    for utt in interview:
+        if utt['speaker'] == "enqueteur":
+            dialog_act_list.append(flatten_list(utt['dialog_act']))
+    return flatten_list(dialog_act_list)
+
+def get_dialog_theme_list(interview):
+    dialog_act_list = []
+    for utt in interview:
+        if utt['speaker'] == "enqueteur":
+            dialog_act_list.append(flatten_list(utt['dialog_theme']))
+    return flatten_list(dialog_act_list)
+
+
+def compute_normalized_count(df, column_name):
+    df_exploded = df.explode(column_name)
+    dialog_act_counts = df_exploded[column_name].value_counts(normalize=True)
+
+    for dialog_act in dialog_act_counts.index:
+        col_name = f"{dialog_act}_normalized_counts"
+        df[col_name] = df[column_name].apply(lambda x: x.count(dialog_act) / len(x) if dialog_act in x else 0)
+    return df
+
 
 
 def compute_features(corpus):

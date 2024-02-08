@@ -126,11 +126,9 @@ class Corpus:
     def __init__(self, config_path=None, corpus_path=None, lang="fr"):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.lang = lang
-
         if self.lang == "fr":
             self.nlp = spacy.load(
-                "fr_core_news_sm", disable=["ner", "parser", "tagger"]
-            )
+                "fr_core_news_sm", disable=["ner", "parser", "tagger"])
             self.nlp.add_pipe("sentencizer")
         else:
             self.nlp = spacy.load("en_core_web_sm", disable=["ner", "parser", "tagger"])

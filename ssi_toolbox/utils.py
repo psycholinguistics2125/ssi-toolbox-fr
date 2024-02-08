@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import re
 
-from gensim.models import Word2Vec, load_facebook_model
+from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
 from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
@@ -137,7 +137,7 @@ def load_model(config, model_name, lang="fr"):
 
     if model_name == "w2v":
         if lang == "fr":
-            return Word2Vec.load(os.path.join(model_folder, "w2v-fr.model"))
+            raise ValueError("Word2Vec model not available for French")
         elif lang == "en":
             return KeyedVectors.load(os.path.join(model_folder, "wv-kv-300.kv"))
         else:
@@ -145,11 +145,11 @@ def load_model(config, model_name, lang="fr"):
 
     elif model_name == "fasttext":
         if lang == "fr":
-            return load_facebook_model.load(
-                os.path.join(model_folder, "fr_fast_text.kv")
+            return KeyedVectors.load_word2vec_format(
+                os.path.join(model_folder, "fr_fast_text.kv"), limit=500000 # limit to 500k words
             )
         elif lang == "en":
-            return KeyedVectors.load(os.path.join(model_folder, "fast_text.kv"))
+            return KeyedVectors.load(os.path.join(model_folder, "fast_text.kv", limit=500000))
         else:
             raise ValueError("lang not supported")
     elif model_name == "sentence_sim":
